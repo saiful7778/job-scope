@@ -6,13 +6,12 @@ export function setItem(key: string, value: unknown) {
   }
 }
 
-export function getItem(key: string) {
+export function getItem<T>(key: string): T | undefined {
   try {
     const data = window.localStorage.getItem(key);
-    return data ? JSON.parse(data) : undefined;
+    return data ? (JSON.parse(data) as T) : undefined;
   } catch (err) {
     console.error(err);
-    return null;
   }
 }
 
