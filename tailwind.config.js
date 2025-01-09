@@ -9,6 +9,9 @@ export default {
       fontFamily: {
         inter: ["Inter", "serif"],
       },
+      animation: {
+        spinner: "spin 2s linear infinite",
+      },
       borderRadius: {
         lg: "var(--radius)",
         md: "calc(var(--radius) - 2px)",

@@ -9,9 +9,10 @@ import {
 } from "@/components/shadcn/ui/dropdown-menu";
 import { useDispatch } from "react-redux";
 import { type Theme, toggleTheme } from "@/redux/features/theme/themeSlice";
+import { AppDispatch } from "@/redux/store";
 
 export function ModeToggle() {
-  const dispatch = useDispatch();
+  const dispatch = useDispatch<AppDispatch>();
 
   const handleThemeChange = (theme: Theme) => {
     dispatch(toggleTheme(theme));

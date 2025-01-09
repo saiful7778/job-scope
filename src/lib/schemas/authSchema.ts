@@ -9,6 +9,12 @@ export const registerSchema = z.object({
     .string({ required_error: "Email address is required" })
     .email({ message: "Email address is required" })
     .max(80, "Email address is too long"),
+  role: z
+    .string({ required_error: "Role is required" })
+    .min(1, "Role is required")
+    .refine((value) => ["freelancer", "client", "admin"].includes(value), {
+      message: "Invalid option selected. Please choose a valid option.",
+    }),
   password: z
     .string({ required_error: "Password is required" })
     .min(8, "Password must be at least 8 characters long")

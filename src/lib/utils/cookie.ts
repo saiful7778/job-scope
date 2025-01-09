@@ -23,5 +23,5 @@ export function getCookie(key: string) {
     }
   }
 
-  return undefined;
+  return undefined
 }

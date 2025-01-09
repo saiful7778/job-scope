@@ -13,8 +13,24 @@ import type { z } from "zod";
 import { Input } from "@/components/shadcn/ui/input";
 import { Button } from "@/components/shadcn/ui/button";
 import PasswordField from "@/components/shadcn/PasswordField";
+import { storeToken } from "@/redux/features/auth/authSlice";
+import { useDispatch } from "react-redux";
+import { AppDispatch } from "@/redux/store";
+import { useState } from "react";
+import toast from "react-hot-toast";
+import errorResponse from "@/lib/errorResponse";
+import { useAxios } from "@/hooks/useAxios";
+import Spinner from "@/components/Spinner";
+import { useLocation, useNavigate } from "react-router";
+import { defaultLoginRedirect } from "@/lib/staticData";
 
 const LoginForm: React.FC = () => {
+  const [isLoading, setIsLoading] = useState<boolean>(false);
+  const axios = useAxios();
+  const dispatch = useDispatch<AppDispatch>();
+  const navigate = useNavigate();
+  const { state } = useLocation();
+
   const form = useForm<z.infer<typeof loginSchema>>({
     resolver: zodResolver(loginSchema),
     defaultValues: {
@@ -24,7 +40,26 @@ const LoginForm: React.FC = () => {
   });
 
   const handleSubmit = async (e: z.infer<typeof loginSchema>) => {
-    console.log("Submitting form:", e);
+    try {
+      setIsLoading(true);
+      const { data } = await axios.post<{
+        access: string;
+        refresh: string;
+      }>("/api/auth/login/", {
+        email: e.email,
+        password: e.password,
+      });
+      toast.success("Login successfully");
+      form.reset();
+      dispatch(
+        storeToken({ accessToken: data?.access, refreshToken: data?.refresh }),
+      );
+      navigate(state?.pathname || defaultLoginRedirect);
+    } catch (err) {
+      toast.error(errorResponse(err));
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   return (
@@ -37,7 +72,12 @@ const LoginForm: React.FC = () => {
             <FormItem>
               <FormLabel>Email Address</FormLabel>
               <FormControl>
-                <Input type="email" placeholder="Email Address" {...field} />
+                <Input
+                  type="email"
+                  placeholder="Email Address"
+                  disabled={isLoading}
+                  {...field}
+                />
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -50,14 +90,18 @@ const LoginForm: React.FC = () => {
             <FormItem>
               <FormLabel>Password</FormLabel>
               <FormControl>
-                <PasswordField placeholder="Password" {...field} />
+                <PasswordField
+                  placeholder="Password"
+                  disabled={isLoading}
+                  {...field}
+                />
               </FormControl>
               <FormMessage />
             </FormItem>
           )}
         />
-        <Button type="submit" className="w-full">
-          Login
+        <Button type="submit" className="w-full" disabled={isLoading}>
+          {isLoading ? <Spinner /> : "Login"}
         </Button>
       </form>
     </Form>

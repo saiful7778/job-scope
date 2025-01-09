@@ -60,10 +60,42 @@
 }
 
 @layer base {
+  ::-webkit-scrollbar {
+    width: 5px;
+  }
+  ::-webkit-scrollbar-track {
+    background: transparent;
+  }
+  ::-webkit-scrollbar-thumb {
+    background: hsl(var(--border));
+    border-radius: 5px;
+  }
   * {
     @apply border-border;
+    scrollbar-width: thin;
+    scrollbar-color: hsl(var(--border)) transparent;
   }
   body {
     @apply bg-background text-foreground;
+    overscroll-behavior: none;
+  }
+  html {
+    scroll-behavior: smooth;
+  }
+
+  .hot-toast-container {
+    border: 1px solid hsl(var(--border));
+    background: hsl(var(--popover));
+    color: hsl(var(--popover-foreground));
+  }
+}
+
+@layer components {
+  .no-scrollbar::-webkit-scrollbar {
+    display: none;
+  }
+  .no-scrollbar {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
   }
 }

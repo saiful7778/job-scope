@@ -1,16 +1,19 @@
+import { accessTokenName, refreshTokenName } from "@/lib/staticData";
 import { getCookie, setCookie } from "@/lib/utils/cookie";
 import { getItem, setItem } from "@/lib/utils/sessionStorage";
 import { RootState } from "@/redux/store";
 import { createSlice, type PayloadAction } from "@reduxjs/toolkit";
 
 interface TokenState {
+  isLoading?: boolean | undefined;
   accessToken?: string | undefined;
   refreshToken?: string | undefined;
 }
 
 const initialState: TokenState = {
-  accessToken: getItem<string>("access"),
-  refreshToken: getCookie("refresh"),
+  isLoading: true,
+  accessToken: getItem<string>(accessTokenName),
+  refreshToken: getCookie(refreshTokenName),
 };
 
 const auth = createSlice({
@@ -21,15 +24,24 @@ const auth = createSlice({
       const updateAccessToken = action.payload.accessToken;
       const updateRefreshToken = action.payload.refreshToken;
 
-      setItem("access", updateAccessToken);
-      setCookie("refresh", updateRefreshToken, 1);
+      if (updateAccessToken) {
+        setItem(accessTokenName, updateAccessToken);
+        state.accessToken = updateAccessToken;
+        state.isLoading = false;
+      }
 
-      state.accessToken = updateAccessToken;
-      state.refreshToken = updateRefreshToken;
+      if (updateRefreshToken) {
+        setCookie(refreshTokenName, updateRefreshToken, 1);
+        state.refreshToken = updateRefreshToken;
+        state.isLoading = false;
+      }
+    },
+    restoreLoading: (state, action: PayloadAction<boolean>) => {
+      state.isLoading = action.payload;
     },
   },
 });
 
-export const { storeToken } = auth.actions;
+export const { storeToken, restoreLoading } = auth.actions;
 export const authSelector = (state: RootState) => state.auth;
 export default auth.reducer;
