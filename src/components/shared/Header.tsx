@@ -1,5 +1,6 @@
 import { Link } from "react-router";
 import { ModeToggle } from "../shadcn/ModeToggle";
+import { Button } from "../shadcn/ui/button";
 
 const Header: React.FC = () => {
   return (
@@ -7,7 +8,12 @@ const Header: React.FC = () => {
       <Link to="/" className="text-2xl font-bold">
         Logo
       </Link>
-      <ModeToggle />
+      <div className="flex items-center gap-2">
+        <ModeToggle />
+        <Button asChild>
+          <Link to="/login">Login</Link>
+        </Button>
+      </div>
     </header>
   );
 };
