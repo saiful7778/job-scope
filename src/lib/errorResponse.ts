@@ -5,6 +5,9 @@ export default function errorResponse(error: unknown): string {
     if (error.response) {
       const errorData = error.response.data;
 
+      if (errorData?.detail) {
+        return errorData.detail as string;
+      }
       if (errorData?.message) {
         return errorData.message as string;
       }

@@ -1,5 +1,7 @@
 import { useAxios } from "@/hooks/useAxios";
 import errorResponse from "@/lib/errorResponse";
+import newAccessToken from "@/lib/newAccessToken";
+import verifyToken from "@/lib/verifyToken";
 import {
   authSelector,
   restoreLoading,
@@ -17,13 +19,15 @@ const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
   const dispatch = useDispatch();
 
   useEffect(() => {
-    if (!token?.accessToken && token.refreshToken) {
+    if (!token?.accessToken && token?.refreshToken) {
       (async () => {
         try {
           dispatch(restoreLoading(true));
-          const { data } = await axios.post<{ access: string }>(
-            "/api/auth/refresh/",
-            { refresh: token.refreshToken },
+
+          await verifyToken(token.refreshToken!);
+
+          const data = await newAccessToken<{ access: string }>(
+            token.refreshToken!,
           );
           dispatch(storeToken({ accessToken: data.access }));
         } catch (err) {

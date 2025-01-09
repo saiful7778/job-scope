@@ -7,6 +7,7 @@ import Home from "@/pages/Home";
 import { createBrowserRouter } from "react-router";
 import PrivateProtector from "./protectors/PrivateProtector";
 import AuthProtector from "./protectors/AuthProtector";
+import SingleJobPost from "@/pages/SingleJobPost";
 
 export const router = createBrowserRouter([
   {
@@ -19,6 +20,14 @@ export const router = createBrowserRouter([
         element: (
           <PrivateProtector>
             <Home />
+          </PrivateProtector>
+        ),
+      },
+      {
+        path: "/job/:postId",
+        element: (
+          <PrivateProtector>
+            <SingleJobPost />
           </PrivateProtector>
         ),
       },
