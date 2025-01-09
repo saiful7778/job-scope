@@ -1,6 +1,6 @@
 import { accessTokenName, refreshTokenName } from "@/lib/staticData";
 import { getCookie, setCookie } from "@/lib/utils/cookie";
-import { getItem, setItem } from "@/lib/utils/sessionStorage";
+import { getItem, setItem, removeItem } from "@/lib/utils/sessionStorage";
 import { RootState } from "@/redux/store";
 import { createSlice, type PayloadAction } from "@reduxjs/toolkit";
 
@@ -39,9 +39,16 @@ const auth = createSlice({
     restoreLoading: (state, action: PayloadAction<boolean>) => {
       state.isLoading = action.payload;
     },
+    clearAuth: (state) => {
+      removeItem(accessTokenName);
+      setCookie(refreshTokenName, undefined, -1);
+      state.accessToken = undefined;
+      state.refreshToken = undefined;
+      state.isLoading = false;
+    },
   },
 });
 
-export const { storeToken, restoreLoading } = auth.actions;
+export const { storeToken, restoreLoading, clearAuth } = auth.actions;
 export const authSelector = (state: RootState) => state.auth;
 export default auth.reducer;
