@@ -5,7 +5,7 @@ import { useSelector } from "react-redux";
 const ThemeProvider: React.FC<{ children: React.ReactNode }> = ({
   children,
 }) => {
-  const theme = useSelector(themeSelector);
+  const { theme } = useSelector(themeSelector);
 
   useEffect(() => {
     const root = window.document.documentElement;
